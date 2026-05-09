@@ -107,6 +107,13 @@ static gboolean on_input_focus_out(GtkWidget *widget, GdkEvent *event, gpointer 
     return FALSE;
 }
 
+static void on_input_changed(GtkTextBuffer *buffer, gpointer data) {
+    (void)buffer; (void)data;
+    if (!placeholder_active) {
+        set_output("");
+    }
+}
+
 static void on_validate_clicked(GtkWidget *widget, gpointer data) {
     (void)widget; (void)data;
     if (placeholder_active) {
@@ -195,6 +202,8 @@ int main(int argc, char *argv[]) {
     set_placeholder();
     g_signal_connect(input_text, "focus-in-event",  G_CALLBACK(on_input_focus_in),  NULL);
     g_signal_connect(input_text, "focus-out-event", G_CALLBACK(on_input_focus_out), NULL);
+    g_signal_connect(gtk_text_view_get_buffer(GTK_TEXT_VIEW(input_text)),
+                 "changed", G_CALLBACK(on_input_changed), NULL);
 
     output_text = gtk_text_view_new();
     gtk_text_view_set_editable(GTK_TEXT_VIEW(output_text), FALSE);
